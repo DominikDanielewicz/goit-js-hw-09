@@ -20,19 +20,41 @@ function createPromise(position, delay) {
 form.addEventListener('submit', e => {
   e.preventDefault();
 
+  let position = 1;
+
   setTimeout(() => {
-    setInterval(() => {
-      createPromise(amount.value, delayStep.value)
+    createPromise(position, delayStep.value)
+      .then(({ position, delay }) => {
+        Notiflix.Notify.failure(
+          `✅ Fulfilled promise ${position} in ${firstDelay.value}ms`
+        );
+      })
+      .catch(({ position, delay }) => {
+        Notiflix.Notify.success(
+          `❌ Rejected promise ${position} in ${firstDelay.value}ms`
+        );
+      });
+    position++;
+    const interval = setInterval(() => {
+      if (position >= amount.value) {
+        clearInterval(interval);
+      }
+      createPromise(position, delayStep.value)
         .then(({ position, delay }) => {
           Notiflix.Notify.failure(
-            `✅ Fulfilled promise ${position} in ${delay}ms`
+            `✅ Fulfilled promise ${position} in ${
+              Number(firstDelay.value) + delay * (position - 1)
+            }ms`
           );
         })
         .catch(({ position, delay }) => {
           Notiflix.Notify.success(
-            `❌ Rejected promise ${position} in ${delay}ms`
+            `❌ Rejected promise ${position} in ${
+              Number(firstDelay.value) + delay * (position - 1)
+            }ms`
           );
         });
+      position++;
     }, delayStep.value);
   }, firstDelay.value);
 });
