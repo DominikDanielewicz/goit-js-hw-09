@@ -18,11 +18,12 @@ const fp = flatpickr('#datetime-picker', {
   minuteIncrement: 1,
   onClose(selectedDates) {
     if (selectedDates[0] < new Date()) {
+      selectedDates[0] = new Date();
       Notiflix.Notify.failure('Please choose a date in the future');
       startButton.setAttribute('disabled', '');
     }
+
     if (selectedDates[0] > new Date()) {
-      Notiflix.Notify.success(`Press START button and let's start counting!`);
       startButton.removeAttribute('disabled');
     }
   },
@@ -38,6 +39,14 @@ startButton.addEventListener('click', () => {
     valueMinutes.textContent = formatedTime.minutes;
     valueSeconds.textContent = formatedTime.seconds;
 
+    if (Number(valueSeconds.textContent) < 0) {
+      clearInterval(timerId);
+      valueDays.textContent = '00';
+      valueHours.textContent = '00';
+      valueMinutes.textContent = '00';
+      valueSeconds.textContent = '00';
+    }
+
     if (
       valueDays.textContent === '00' &&
       valueHours.textContent === '00' &&
@@ -45,7 +54,6 @@ startButton.addEventListener('click', () => {
       valueSeconds.textContent === '00'
     ) {
       clearInterval(timerId);
-      Notiflix.Notify.success('The time has come!');
     }
   }, 1000);
 });

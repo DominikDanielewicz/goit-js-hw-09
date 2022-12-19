@@ -37,10 +37,17 @@ function promiseCreator(position, delay) {
 
 form.addEventListener('submit', e => {
   e.preventDefault();
-
-  for (let position = 0; position < amount.value; position++) {
-    setTimeout(() => {
-      promiseCreator(position, delayStep.value);
-    }, Number(firstDelay.value) + position * Number(delayStep.value));
+  if (
+    Number(firstDelay.value) < 0 ||
+    Number(delayStep.value) < 0 ||
+    Number(amount.value) < 0
+  ) {
+    Notiflix.Notify.failure(`❌ Please provide positive values`);
+  } else {
+    for (let position = 0; position < amount.value; position++) {
+      setTimeout(() => {
+        promiseCreator(position, delayStep.value);
+      }, Number(firstDelay.value) + position * Number(delayStep.value));
+    }
   }
 });
