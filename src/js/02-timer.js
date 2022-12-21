@@ -8,6 +8,7 @@ const valueDays = document.querySelector('span[data-days]');
 const valueHours = document.querySelector('span[data-hours]');
 const valueMinutes = document.querySelector('span[data-minutes]');
 const valueSeconds = document.querySelector('span[data-seconds]');
+let timerId;
 
 startButton.setAttribute('disabled', '');
 
@@ -21,16 +22,24 @@ const fp = flatpickr('#datetime-picker', {
       selectedDates[0] = new Date();
       Notiflix.Notify.failure('Please choose a date in the future');
       startButton.setAttribute('disabled', '');
+      valueDays.textContent = '00';
+      valueHours.textContent = '00';
+      valueMinutes.textContent = '00';
+      valueSeconds.textContent = '00';
     }
 
     if (selectedDates[0] > new Date()) {
       startButton.removeAttribute('disabled');
+      Notiflix.Notify.success('Press START button and start counting!');
     }
+  },
+  onOpen() {
+    clearInterval(timerId);
   },
 });
 
 startButton.addEventListener('click', () => {
-  const timerId = setInterval(() => {
+  timerId = setInterval(() => {
     let timeLeft = time(fp.selectedDates[0] - new Date());
     let formatedTime = addLeadingZero(timeLeft);
 
@@ -38,14 +47,6 @@ startButton.addEventListener('click', () => {
     valueHours.textContent = formatedTime.hours;
     valueMinutes.textContent = formatedTime.minutes;
     valueSeconds.textContent = formatedTime.seconds;
-
-    if (Number(valueSeconds.textContent) < 0) {
-      clearInterval(timerId);
-      valueDays.textContent = '00';
-      valueHours.textContent = '00';
-      valueMinutes.textContent = '00';
-      valueSeconds.textContent = '00';
-    }
 
     if (
       valueDays.textContent === '00' &&
